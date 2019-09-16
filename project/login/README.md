@@ -3,11 +3,11 @@
 ### 破解要求
 即使用户名密码输入错误，也显示登录成功。
 ### 破解方法
-1、找到MainActivity$login_button.smali
-2、修改代码，在.line 40下添加:cond_1
-3、修改判断语句后的执行结果，将cond_0改为cond_1
-4、重新编译apk
-![重新编译apk](building_apk.png)
+1、找到MainActivity$login_button.smali  
+2、修改代码，在.line 40下添加:cond_1  
+3、修改判断语句后的执行结果，将cond_0改为cond_1  
+4、重新编译apk  
+![重新编译apk](building_apk.png)  
 ### MainActivity.java
 ```java
 package com.dazhuang.login;
