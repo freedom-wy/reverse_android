@@ -19,6 +19,171 @@ classes.dex   android程序通过dex格式的可执行文件运行在dalvik虚�
 ![java和smali互转](image/java2smali.png)  
 ### smali相关知识点
 [深入理解 Dalvik 字节码指令及 Smali 文件](https://juejin.im/entry/579ef6e37db2a2005a6350d8)  
+必看[Android smali语法](https://blog.csdn.net/rozol/article/details/88368358)  
+### java和smali对比  
+```java
+public class Hello{
+    public int foo(int a,int b){
+        return (a+b)*(a-b);    
+    };
+
+    public static void main(String[] args){
+        Hello hello = new Hello();
+        System.out.println(hello.foo(5,3));
+    };
+};
+```
+```java
+.class public LHello;
+.super Ljava/lang/Object;
+.source "Hello.java"
+
+
+# direct methods
+// 构造方法
+.method public constructor <init>()V
+    .registers 1
+
+    .prologue
+    .line 1
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+// 静态主方法，L是对象，参数是string字符串
+.method public static main([Ljava/lang/String;)V
+    .registers 5
+
+    .prologue
+    // 定位到原java文件的第七行
+    .line 7
+    // 创建实例
+    new-instance v0, LHello;
+
+    invoke-direct {v0}, LHello;-><init>()V
+
+    .line 8
+    // sput是对静态字段写操作，sget是对静态字段读操作。iput和iget是面对普通字段。
+    sget-object v1, Ljava/lang/System;->out:Ljava/io/PrintStream;
+    //定义两个常量
+    const/4 v2, 0x5
+
+    const/4 v3, 0x3
+    // 调用方法
+    invoke-virtual {v0, v2, v3}, LHello;->foo(II)I
+    // 将结果传递给v0
+    move-result v0
+    // 调用System.out.println方法
+    invoke-virtual {v1, v0}, Ljava/io/PrintStream;->println(I)V
+
+    .line 9
+    // 方法返回
+    return-void
+.end method
+
+
+# virtual methods
+.method public foo(II)I
+    .registers 5
+
+    .prologue
+    .line 3
+    // 调用求和指令,p1+p2，返回给v0
+    add-int v0, p1, p2
+    // 调用减法，p1-p2,返回给v1
+    sub-int v1, p1, p2
+    // 调用乘法,v0*v1，返回给v0
+    mul-int/2addr v0, v1
+
+    return v0
+.end method
+```
+```java
+public class for_test {
+    
+    public void for_test_method() {
+        for(int a = 0;a<10;a++) {
+            System.out.println(a);
+        };
+    };
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+        for_test test = new for_test();
+        test.for_test_method();
+    }
+
+}
+```
+```java
+.class public Lfor_test;
+.super Ljava/lang/Object;
+.source "for_test.java"
+
+
+# direct methods
+// 构造方法
+.method public constructor <init>()V
+    .registers 1
+
+    .prologue
+    .line 1
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+// 静态主方法，L是对象，参数是string字符串
+.method public static main([Ljava/lang/String;)V
+    .registers 2
+
+    .prologue
+    .line 11
+    // 创建实例，对象为for_test，保存在v0
+    new-instance v0, Lfor_test;
+
+    invoke-direct {v0}, Lfor_test;-><init>()V
+
+    .line 12
+    // 调用方法for_test_method
+    invoke-virtual {v0}, Lfor_test;->for_test_method()V
+
+    .line 13
+    return-void
+.end method
+
+
+# virtual methods
+.method public for_test_method()V
+    .registers 3
+
+    .prologue
+    .line 4
+    // 定义常量,0x0是0，0xa是10
+    const/4 v0, 0x0
+
+    :goto_1
+    const/16 v1, 0xa
+    // 如果v0大于等于v1，返回值为cond_d
+    if-ge v0, v1, :cond_d
+
+    .line 5
+    sget-object v1, Ljava/lang/System;->out:Ljava/io/PrintStream;
+
+    invoke-virtual {v1, v0}, Ljava/io/PrintStream;->println(I)V
+
+    .line 4
+    // for循环内部的加法
+    add-int/lit8 v0, v0, 0x1
+    // 满足条件，继续循环
+    goto :goto_1
+
+    .line 7
+    // 不满足条件
+    :cond_d
+    return-void
+.end method
+```
 文中涉及到的软件下载:  
 ```text
 链接：https://pan.baidu.com/s/1mHOl9y-LXnETUg3oDAKNvA 
@@ -27,5 +192,6 @@ classes.dex   android程序通过dex格式的可执行文件运行在dalvik虚�
 参考文章:  
 《android软件安全权威指南》  
 [Smali介绍与学习](https://mp.weixin.qq.com/s/JN6tl85N3tGx5XW4Wu7Y9Q)  
+[Android smali语法](https://blog.csdn.net/rozol/article/details/88368358)  
 ***
 BUG：dazhuang_python@sina.com
