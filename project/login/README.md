@@ -1,9 +1,10 @@
 # reverse_android 从安卓开发到逆向
-## login 登录demo
+## [login 登录demo-通过androidkiller将apk转换为smali逆向](#jump1)
+## [通过d2j-dex2jar将dex转换为java可读代码](#jump2)  
 ![demo界面](login.png)
 ### 破解要求
 即使用户名密码输入错误，也显示登录成功。
-### 破解方法
+### <span id="jump1">破解方法</span>
 1、找到MainActivity$login_button.smali  
 2、修改代码，在.line 40下添加:cond_1  
 3、修改判断语句后的执行结果，将cond_0改为cond_1  
@@ -400,3 +401,16 @@ public class MainActivity extends AppCompatActivity {
     return-void
 .end method
 ```
+### <span id="jump2">破解方法</span>
+#### d2j-dex2jar软件下载地址
+```text
+链接：https://pan.baidu.com/s/1mHOl9y-LXnETUg3oDAKNvA 
+提取码：3ygd 
+```
+1、首先解压缩apk  
+2、将classes.dex复制到dex-tools-2.1-SNAPSHOT  
+3、在命令行中输入d2j-dex2jar.bat classes.dex,经过反编译后会生成classes-dex2jar.jar  
+4、使用jd-gui打开classes-dex2jar.jar即可查看  
+5、或者直接使用androidkiller查看即可  
+***
+BUG：dazhuang_python@sina.com
