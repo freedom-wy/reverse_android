@@ -116,6 +116,7 @@ public class for_test {
 
 }
 ```
+再看另一段java代码  
 ```java
 .class public Lfor_test;
 .super Ljava/lang/Object;
@@ -193,5 +194,9 @@ public class for_test {
 《android软件安全权威指南》  
 [Smali介绍与学习](https://mp.weixin.qq.com/s/JN6tl85N3tGx5XW4Wu7Y9Q)  
 [Android smali语法](https://blog.csdn.net/rozol/article/details/88368358)  
+***
+#### 微信公众号
+不定期分享一些python爬虫,逆向破解相关文章,欢迎大家关注.  
+![微信公众号](image/gongzhonghao.jpg)
 ***
 BUG：dazhuang_python@sina.com
