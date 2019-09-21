@@ -17,6 +17,8 @@ classes.dex   android程序通过dex格式的可执行文件运行在dalvik虚�
 ### java和smali互转工具
 1、J2S2J  java和smali互转  
 ![java和smali互转](image/java2smali.png)  
+### smali相关知识点
+[深入理解 Dalvik 字节码指令及 Smali 文件](https://juejin.im/entry/579ef6e37db2a2005a6350d8)
 文中涉及到的软件下载:  
 ```text
 链接：https://pan.baidu.com/s/1mHOl9y-LXnETUg3oDAKNvA 
@@ -25,6 +27,7 @@ classes.dex   android程序通过dex格式的可执行文件运行在dalvik虚�
 参考文章:
 ```text
 《android软件安全权威指南》  
-[BUFF | Smali介绍与学习](https://mp.weixin.qq.com/s/JN6tl85N3tGx5XW4Wu7Y9Q)
+[Smali介绍与学习](https://mp.weixin.qq.com/s/JN6tl85N3tGx5XW4Wu7Y9Q)
 ```
 ***
+BUG：dazhuang_python@sina.com
