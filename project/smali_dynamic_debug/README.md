@@ -22,6 +22,10 @@ adb shell am start -D -n com.dazhuang.smali_dynamic_debug/.MainActivity
 #### 6、开启android studio的调试模式  
 ![](image/5.png)  
 #### 7、点击改变文字按钮，开始调试  
-![](image/6.png)
+![](image/6.png)  
+***
+#### 微信公众号
+不定期分享一些python爬虫,逆向破解相关文章,欢迎大家关注.  
+![微信公众号](image/gongzhonghao.jpg)
 ***
 BUG：dazhuang_python@sina.com
