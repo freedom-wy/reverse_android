@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">smali_dynamic_debug</string>
+    <string name="button_text">改变文字</string>
+    <string name="change_text">安卓从开发到逆向</string>
+</resources>
