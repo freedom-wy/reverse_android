@@ -10,6 +10,11 @@
 5、点击androidkiller中android标签中的编译重新打包破解后的apk  
 6、验证  
 ***
+apk及破解工具下载  
+```text
+链接：https://pan.baidu.com/s/1mHOl9y-LXnETUg3oDAKNvA 
+提取码：3ygd 
+```  
 原OppPay$2$1.smali的onFailure方法  
 ```java
 .method public onFailure(Ljava/lang/String;I)V
