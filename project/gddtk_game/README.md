@@ -15,6 +15,10 @@ apk及破解工具下载
 链接：https://pan.baidu.com/s/1mHOl9y-LXnETUg3oDAKNvA 
 提取码：3ygd 
 ```  
+准备工具  
+```text
+android killer，安卓手游1，夜神模拟器
+```  
 原OppPay$2$1.smali的onFailure方法  
 ```java
 .method public onFailure(Ljava/lang/String;I)V
