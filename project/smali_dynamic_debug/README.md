@@ -1,5 +1,5 @@
 # reverse_android 从安卓开发到逆向
-## smali_dynamic_debug smali动态调试，插桩，debug
+## smali_dynamic_debug smali动态调试，debug
 ### 准备工具
 ```text
 android killer，android studio，夜神模拟器，adb
