@@ -1,1 +1,1 @@
-include ':app', ':login', ':smali_dynamic_debug'
+include ':app', ':login', ':smali_dynamic_debug', ':check_md5'
