@@ -169,7 +169,7 @@ script.on("message",on_message)
 script.load()
 sys.stdin.read()
 ```
-**必须要保证Frida-server是启动的**
+**必须要保证Frida-server是启动的**  
 **必须要保证已启动app**
 在执行完Python代码后，我们再来点击按钮，此时，无论出什么，都是我们获胜并取得最终结果了。
 ***
