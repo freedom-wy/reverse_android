@@ -1,177 +1,101 @@
 # reverse_android 从安卓开发到逆向
-## app逆向神器Frida。
-### 什么是Frida：
-Frida是一款基于python + js的Hook框架，适用于android，ios等平台，由于是基于脚本的交互，因此相比xposed和substrace cydia更加便捷。Frida的官网为：http://www.frida.re/  
-frida环境的搭建主要分为两个部分，一部分是运行在系统上的交互工具frida，另一部分是运行在Android机器上的注入工具frida-server。  
-如果你也想了解Xposed框架的使用，请移步[《安卓从开发到逆向（五）小白也看得懂的Xposed框架入门》](https://mp.weixin.qq.com/s/xfWPGl4ulyEcPfAN1AfWkg)  
-本文将介绍Frida框架的安装和使用Frida对Demo APP的逆向破解。
-### 准备工具：
-```text
-真实手机设备，frida==12.7.5，frida-tools==5.1.0，frida-server-12.7.5-android-arm64.xz，JEB2.2.5，石头剪刀布.apk
-```
-### 工具下载地址：
-```text
-链接：https://pan.baidu.com/s/1mHOl9y-LXnETUg3oDAKNvA
-提取码：3ygd
-```
+## 绕过APP用户名判断逻辑
 
-Frida的环境搭建需要两个部分，分别为Frida和Frida-server。
-### 安装Frida：
-安装Frida非常的简单，只需要你的操作系统中有Python开发环境，使用Pip工具即可安装。
-```text
-pip install frida-tools
-```
-安装frida-tools，连带着会安装frida的python包。  
-由于操作系统等环境的不同，可能会卡在frida包的安装过程中，此时需要使用frida的源码包进行安装。在Pypi站点中下载frida-12.7.5-py3.7-win-amd64.egg，使用easy_install进行安装即可。  
-接下来安装Frida-server，注意Frida-server是需要安装在手机上的，因此强烈要求大家有一台用于测试使用的真实手机，建议不要使用安卓模拟器。  
-Frida-server可以在github上下载：  
-```text
-https://github.com/frida/frida/releases
-```
-下载前，需要查看当前手机架构信息，在adb shell中使用如下命令进行查看
-```text
-C:\Users\Administrator>adb shell #进入手机底层安卓操作系统
-shell@X3:/ $ su                  #切换到root权限
-root@X3:/ # cat /proc/cpuinfo    #查看架构信息
-Processor       : AArch64 Processor rev 2 (aarch64)  #架构为AMD64
-processor       : 0
-model name      : AArch64 Processor rev 2 (aarch64)
-BogoMIPS        : 26.00
-Features        : fp asimd aes pmull sha1 sha2 crc32
-fp asimd aes pmull sha1 sha2 crc32
-CPU implementer : 0x41
-CPU architecture: AArch64
-CPU variant     : 0x0
-CPU part        : 0xd03
-CPU revision    : 2
-
-Hardware        : MT6795T
-```
-我这款老旧的乐视手机架构信息为AMD64，因此下载Frida-server amd64平台的安装文件即可。  
-下载完成后，将文件解压，将文件frida-server-12.7.5-android-arm64使用如下命令push到系统中。
-```text
-adb push frida-server-12.7.5-android-arm64 /data/local/tmp/   #push文件
-adb shell       #进入手机操作系统
-su              #切换到root权限
-cd /data/local/tmp/   #进入相关目录
-chmod 777 frida-server-12.7.5-android-arm64  #给文件赋权限，777为最高权限
-./frida-server-12.7.5-android-arm64  #启动frida-server
-```
-使用如下命令转发android TCP端口到本地：
-```text
-adb forward tcp:27042 tcp:27042
-adb forward tcp:27043 tcp:27043
-```
-如上命令操作完成后，可以在PC端，cmd命令行下使用如下命令，查看当前Frida-server是否安装成功。如果出现android手机的进程列表说明搭建成功
-```text
-frida-ps -R
-```
-接下来对官网提供的石头剪刀布demo APP进行逆向破解。  
-demo app下载地址：
-```text
-https://github.com/ctfs/write-ups-2015/tree/master/seccon-quals-ctf-2015/binary/reverse-engineering-android-apk-1
-```
-破解该app，首先将石头剪刀布.apk拖入JEB进行反编译，定位到MainActivity的onCreate方法。我们可以看到其声明了按钮控件和设置了点击事件。
-```java
-public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        this.P = (Button) findViewById(R.id.button);
-        this.S = (Button) findViewById(R.id.button3);
-        this.r = (Button) findViewById(R.id.buttonR);
-        this.P.setOnClickListener(this);
-        this.r.setOnClickListener(this);
-        this.S.setOnClickListener(this);
-        this.flag = 0;
-    }
-
-```
-继续查看button的onclick方法，可以看出程序的石头剪子布是通过随机数组出的，其判断输赢的方法在this.showMessageTask中。
-```java
-public void onClick(View v) {
-        if (this.flag != 1) {
-            this.flag = 1;
-            ((TextView) findViewById(R.id.textView3)).setText("");
-            TextView tv = (TextView) findViewById(R.id.textView);
-            TextView tv2 = (TextView) findViewById(R.id.textView2);
-            this.m = 0;
-            this.n = new Random().nextInt(3);
-            tv2.setText(new String[]{"CPU: Paper", "CPU: Rock", "CPU: Scissors"}[this.n]);
-            if (v == this.P) {
-                tv.setText("YOU: Paper");
-                this.m = 0;
-            }
-            if (v == this.r) {
-                tv.setText("YOU: Rock");
-                this.m = 1;
-            }
-            if (v == this.S) {
-                tv.setText("YOU: Scissors");
-                this.m = 2;
-            }
-            this.handler.postDelayed(this.showMessageTask, 1000);
-        }
-    }
-```
-分析showMessageTask后，我们可以看到如果赢了，mainActivity.cnt会+1，但是一旦输了mainActivity.cnt就会置0，而取胜的条件是最终赢了1000次后，才会有相应的结果输出。
-分析一下，怎么样才能快速的赢1000次。
-```java
-if(1000 == MainActivity.this.cnt) {  // 赢1000次
-    ((TextView)v0).setText("SECCON{" + String.valueOf((MainActivity.this.cnt + MainActivity.this.calc()) * 107) + "}");  // (1000+calc的int返回值)*107
-}
-```
-我们可以直接将MainActivity.this.cnt的值构造成1000，这样就可以执行下面的语句操作拿到最终结果了。
-为了将MainActivity.this.cnt值构造为1000，我们需要Hook代码，让电脑无论出什么，都是我们赢，我们需要更改其逻辑。
-即让电脑永远出0，我们永远出2，这样，我们就可以一直赢了。
-Hook代码如下：
+Frida可以把数据从安卓app里传递到python所在的主机上，在主机上进行修改，再传递回安卓app里面去。
+通过一个小Demo来实现这一功能。Demo界面很简单，输入用户名密码，该Demo会判断输入的用户名是否为admin，如果是，则返回错误，进而登录。如果不是，则会把用户名和密码传递到服务器上进行验证。  
+我们要实现，即使用户名不是admin，我们要在python端将其修改为admin，并连同密码一同发送到服务器端进行验证。从而绕过Demo App中对admin用户名的限制。
+JS Hook代码为：
 ```javascript
-Java.perform(function () {
-    //定位到相关类
-    var MainActivity = Java.use('com.example.seccon2015.rock_paper_scissors.MainActivity');
-    //Hook相关方法
-    MainActivity.onClick.implementation = function (v) {
-        send("开始Hook");
-        this.onClick(v);
-        this.n.value = 0;
-        this.m.value = 2;
-        this.cnt.value = 999;
-        send("Hook成功!")
-    }
-});
+Java.perform(function(){
+        /*
+        Js脚本提供了向主控端发送数据的接口—send和从主控端接收数据的接口—recv
+        而在主控端是通过python脚本的回调来接收数据
+        */
+        // 定位到相关类
+        var tv_class = Java.use("android.widget.TextView");
+        //重载setText方法,关键字overload
+        tv_class.setText.overload("java.lang.CharSequence").implementation = function(x){
+            console.log("开始Hook");
+            //使用send方法将获取到的值传递到Python端
+            send(x.toString());
+            var string_to_recv;
+            //从python端接收值
+            recv(function(received_json_object){
+                string_to_recv = received_json_object['my_data'];
+            }).wait();
+            // 调用重载方法执行发送到服务端验证
+            return this.setText.overload("java.lang.CharSequence").call(this,string_to_recv)
+        };
+    });
 ```
-执行代码为：
+python端执行代码为：
 ```python
-import frida,sys
+import sys
+import frida
 
-jscode = '''
-Java.perform(function () {
-    var MainActivity = Java.use('com.example.seccon2015.rock_paper_scissors.MainActivity');
-    MainActivity.onClick.implementation = function (v) {
-        send("开始Hook");
-        this.onClick(v);
-        this.n.value = 0;
-        this.m.value = 2;
-        this.cnt.value = 999;
-        send("Hook成功!")
-    }
-});
-'''
+def my_message_handler(message, payload):
+    if message["type"] == "send":
+        # 获取JS Hook代码传递过来的数据
+        username,password = message["payload"].split(":")[1:]
+        print("收到的用户名密码为:",username,password)
+        # 篡改数据，将原用户名更改为admin
+        value = "admin:"+str(password)
+        print("发送回去的用户名密码为:",value)
+        script.post({"my_data": value})  # 将JSON对象发送回去
 
-def on_message(message, data):
-    if message['type'] == 'send':
-        print("[*] {0}".format(message['payload']))
-    else:
-        print(message)
-
-process = frida.get_usb_device().attach("com.example.seccon2015.rock_paper_scissors")
+# 获取连接中的USB设备实例,并附加一个进程，进程用包名来获取
+process = frida.get_usb_device().attach("com.dazhuang.check_username")
+#读取JS Hook脚本
+with open("check_admin.js",encoding="utf-8") as f:
+    jscode = f.read()
+# 获取script实例
 script = process.create_script(jscode)
-script.on("message",on_message)
+# 添加一个消息回调，第一个参数是信号名，固定为message，第二个为回调函数
+script.on("message",my_message_handler)
+# 加载脚本
 script.load()
 sys.stdin.read()
 ```
-**必须要保证Frida-server是启动的**  
-**必须要保证已启动app**
-在执行完Python代码后，我们再来点击按钮，此时，无论出什么，都是我们获胜并取得最终结果了。
+接下来执行三个步骤：
+1、启动frida-server
+2、启动demo app
+3、执行hook代码
+执行Hook代码后，我们在Demo APP中输入用户名为aaa，密码为bbb，但是在TextView区域中，我们却看到验证的用户名为admin，密码为bbb。
+***
+Frida知识点补充
+原文详见：
+```text
+《是时候来了解frida的用法了--Hook Java代码篇》 https://www.52pojie.cn/thread-931872-1-1.html
+```
+载入类：
+Java.use用于声明一个Java类或用于获取到一个类，在用一个Java类之前首先需要声明。
+```javascript
+var StringClass=Java.use("java.lang.String");
+```
+修改函数的实现：
+修改一个函数的实现是逆向调试中最重要的一环，修改一个函数的实现后，如果这个参数被调用，我们的Hook代码里的函数也会被调用，从而实现了通过JS代码Hook原java方法。
+Hook带参数的构造方法：
+修改参数为byte[]类型的构造方法
+```javascript
+ClassName.$init.overload('[B').implementation = function(param){
+    //do something;
+};
+```
+调用构造方法：
+```javascript
+ClassName.$init.overload('[B').implementation=function(param){
+    //do something
+    this.$init(value);
+    //do something
+}
+```
+Hook一般方法：
+```javascript
+ClassName.func.overload('[B').implementation=function(param){
+    //do something
+    return this.func(vale)
+}
+```
 ***
 #### 微信公众号
 不定期分享一些python爬虫,逆向破解相关文章,欢迎大家关注.  
