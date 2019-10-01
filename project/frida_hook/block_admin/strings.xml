@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">check_username</string>
+    <string name="message">请输入用户名和密码进行验证</string>
+    <string name="username">请输入用户名</string>
+    <string name="password">请输入密码</string>
+    <string name="btn">登录验证</string>
+</resources>
