@@ -7,6 +7,7 @@
 ### 4、smali_dynamic_debug[smali动态调试，debug](https://github.com/freedom-wy/reverse_android/tree/master/project/smali_dynamic_debug)
 ### 5、check_md5 [smali插桩](https://github.com/freedom-wy/reverse_android/tree/master/project/check_md5)
 ### 6、frida_hook [frida相关](https://github.com/freedom-wy/reverse_android/tree/master/project/frida_hook)
+### 7、crawl_zhipin_job [某直聘APP逆向破解](https://github.com/freedom-wy/reverse_android/tree/master/project/crawl_zhipin_job)
 ***
 #### 微信公众号
 不定期分享一些python爬虫,逆向破解相关文章,欢迎大家关注.  
